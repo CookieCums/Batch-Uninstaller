@@ -47,16 +47,17 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
         val entry = app.packageName?.let { debloatEntries[it] }
         if (entry == null) {
             holder.mTvDebloatInfo.text = mContext.getString(R.string.debloat_no_match)
+            holder.mTvDebloatInfo.setBackgroundResource(R.drawable.debloat_info_background)
         } else {
             val risk = UadRiskMapper.fromRemoval(entry.removal)
             val explanation = entry.description ?: mContext.getString(R.string.debloat_no_description)
             val source = listOfNotNull(entry.list, entry.removal).joinToString(" · ")
-            val warnings = entry.labels.orEmpty().takeIf { it.isNotEmpty() }?.joinToString(", ")
+            val notes = entry.labels.orEmpty().takeIf { it.isNotEmpty() }?.joinToString(", ")
             holder.mTvDebloatInfo.text = buildString {
                 append(risk.displayName)
                 if (source.isNotBlank()) append("  ·  ").append(source)
                 append("\n").append(explanation)
-                if (warnings != null) append("\nNotes: ").append(warnings)
+                if (notes != null) append("\nLabels: ").append(notes)
                 if (!entry.dependencies.isNullOrEmpty()) append("\nDependencies: ").append(entry.dependencies.joinToString(", "))
                 if (!entry.neededBy.isNullOrEmpty()) append("\nNeeded by: ").append(entry.neededBy.joinToString(", "))
             }
@@ -71,12 +72,8 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
     }
 
     override fun getItemCount(): Int = mAppsList.size
-
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean = false
-
-    override fun onItemDismiss(position: Int, direction: Int) {
-        notifyDataSetChanged()
-    }
+    override fun onItemDismiss(position: Int, direction: Int) = notifyDataSetChanged()
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), RVHViewHolder {
         val mLayoutItem: RelativeLayout = itemView.findViewById(R.id.layout_appitem)
@@ -86,7 +83,6 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
         val mTvPackageName: TextView = itemView.findViewById(R.id.tv_package_name)
         val mTvDebloatInfo: TextView = itemView.findViewById(R.id.tv_debloat_info)
         val mImgIcon: ImageView = itemView.findViewById(R.id.img_icon)
-
         override fun onItemSelected(actionstate: Int) = Unit
         override fun onItemClear() = Unit
     }
