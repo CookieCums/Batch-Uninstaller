@@ -1,6 +1,16 @@
 <resources>
     <!-- App Name -->
-    <string name="app_name">Batch Uninstaller</string>
+    <string name="app_name">AppSieve</string>
+    <string name="app_icon">Application icon</string>
+    <string name="package_unknown">Package identifier unavailable</string>
+    <string name="debloat_database_loading">Loading community debloat information…</string>
+    <string name="debloat_no_match">No UAD-ng entry found for this package. No risk classification is available.</string>
+    <string name="debloat_no_description">The upstream entry has no description.</string>
+    <string name="update_database">Update database now</string>
+    <string name="scan_apps_now">Scan installed apps now</string>
+    <string name="database_updated">Debloat database updated</string>
+    <string name="database_update_failed">Database update failed; the last valid cache was preserved.</string>
+    <string name="database_cache_loaded">Loaded cached debloat data</string>
 
     <!-- General -->
     <string name="dont_show_again">Don\'t show again</string>
