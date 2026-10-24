@@ -25,7 +25,7 @@ object UadDatabaseScheduler {
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .build()
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request
+            WORK_NAME, ExistingPeriodicWorkPolicy.REPLACE, request
         )
     }
 
