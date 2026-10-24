@@ -486,6 +486,19 @@ class MainActivity : AppCompatActivity() {
                 refreshList()
                 true
             }
+            R.id.database_interval -> {
+                MaterialDialog.Builder(this@MainActivity)
+                    .title(R.string.database_update_frequency)
+                    .items(R.array.database_update_frequency_options)
+                    .itemsCallbackSingleChoice(-1) { _, _, which, _ ->
+                        val days = when (which) { 0 -> 1; 1 -> 3; 2 -> 7; else -> null }
+                        UadDatabaseScheduler.setInterval(applicationContext, days)
+                        true
+                    }
+                    .positiveText(R.string.done)
+                    .show()
+                true
+            }
             R.id.about -> {
                 about()
                 true
