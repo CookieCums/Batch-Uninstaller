@@ -29,7 +29,12 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.app_list_item, parent, false)
-        val holder = ItemViewHolder(view)\n        view.setOnClickListener {\n            val position = holder.bindingAdapterPosition\n            if (position != RecyclerView.NO_POSITION) onItemClick(position)\n        }\n        return holder
+        val holder = ItemViewHolder(view)
+        view.setOnClickListener {
+            val position = holder.bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION) onItemClick(position)
+        }
+        return holder
     }
 
     @Throws(Resources.NotFoundException::class)
