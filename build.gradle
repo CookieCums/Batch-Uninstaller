@@ -3,8 +3,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-    jcenter() // Read-only fallback for legacy dependencies; remove after migration.
-        jcenter() // Read-only fallback for legacy dependencies; remove after migration.
+        jcenter() // Read-only fallback for legacy artifacts.
         maven { url "https://jitpack.io" }
     }
     dependencies {
@@ -17,6 +16,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        jcenter() // Read-only fallback for legacy artifacts.
         maven { url "https://jitpack.io" }
     }
 }
