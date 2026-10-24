@@ -146,10 +146,23 @@ class MainActivity : AppCompatActivity() {
         }
         //sort by installed data descending as default
         mApps.sortWith(Comparator { o1: AppInfo, o2: AppInfo -> if (o1.firstInstallTime < o2.firstInstallTime) 1 else -1 })
-        mAppsCopy = mApps
+        allApps = ArrayList(mApps)
+        mAppsCopy = ArrayList(mApps)
 
         //populate the recyclerview
         mAdapter = AppInfoAdapter(this, mApps)
+        binding.searchApps.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchQuery = query.orEmpty().trim()
+                applyAppFilters()
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchQuery = newText.orEmpty().trim()
+                applyAppFilters()
+                return true
+            }
+        })
         loadDebloatDatabase()
         mRvAppList.layoutManager = LinearLayoutManager(this)
         mRvAppList.adapter = mAdapter
@@ -250,75 +263,17 @@ class MainActivity : AppCompatActivity() {
         binding.layoutSwiperefresh.setOnRefreshListener { refreshList() }
         binding.fabFilter.setOnClickListener {
             MaterialDialog.Builder(this@MainActivity)
-                    .title(R.string.filter)
-                    .items(R.array.filter)
-                    .itemsCallbackSingleChoice(-1) { _, _, which, _ ->
-                        when (which) {
-                            0 -> {
-                                val tSystem = Thread(Runnable {
-                                    mApps.clear()
-                                    mPkgs = PackageUtils.getPackageNames(applicationContext)
-                                    var count = 0
-                                    for (pkg in mPkgs) {
-                                        if (PackageUtils.isSystemApp(applicationContext, pkg)) {
-                                            mApps.add(AppInfo(pkg, applicationContext))
-                                            count++
-                                        }
-                                    }
-                                    Log.d(TAG, "System-> $count")
-                                    runOnUiThread {
-                                        mAdapter!!.notifyDataSetChanged()
-                                        binding.layoutSwiperefresh.isRefreshing = false
-                                    }
-                                })
-                                binding.layoutSwiperefresh.isRefreshing = true
-                                tSystem.start()
-                            }
-                            1 -> {
-                                val tUser = Thread(Runnable {
-                                    mApps.clear()
-                                    mPkgs = PackageUtils.getPackageNames(applicationContext)
-                                    var count = 0
-                                    for (pkg in mPkgs) {
-                                        if (!PackageUtils.isSystemApp(applicationContext, pkg)) {
-                                            mApps.add(AppInfo(pkg, applicationContext))
-                                            count++
-                                        }
-                                    }
-                                    Log.d(TAG, "User-> $count")
-                                    runOnUiThread {
-                                        mAdapter!!.notifyDataSetChanged()
-                                        binding.layoutSwiperefresh.isRefreshing = false
-                                    }
-                                })
-                                binding.layoutSwiperefresh.isRefreshing = true
-                                tUser.start()
-                            }
-                            2 -> {
-                                val tAll = Thread(Runnable {
-                                    mApps.clear()
-                                    mPkgs = PackageUtils.getPackageNames(applicationContext)
-                                    var count = 0
-                                    for (pkg in mPkgs) {
-                                        mApps.add(AppInfo(pkg, applicationContext))
-                                        count++
-                                    }
-                                    Log.d(TAG, "All-> $count")
-                                    runOnUiThread {
-                                        mAdapter!!.notifyDataSetChanged()
-                                        binding.layoutSwiperefresh.isRefreshing = false
-                                    }
-                                })
-                                binding.layoutSwiperefresh.isRefreshing = true
-                                tAll.start()
-                            }
-                            else -> {
-                            }
-                        }
-                        true
+                .title(R.string.filter)
+                .items(R.array.filter)
+                .itemsCallbackSingleChoice(appFilter) { _, _, which, _ ->
+                    if (which >= 0) {
+                        appFilter = which
+                        applyAppFilters()
                     }
-                    .positiveText(R.string.done)
-                    .show()
+                    true
+                }
+                .positiveText(R.string.done)
+                .show()
         }
         binding.fabSort.setOnClickListener {
             MaterialDialog.Builder(this@MainActivity)
@@ -588,6 +543,25 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
+
+    private fun applyAppFilters() {
+        val query = searchQuery
+        val filtered = allApps.filter { app ->
+            val matchesType = when (appFilter) {
+                0 -> app.systemApp
+                1 -> !app.systemApp
+                else -> true
+            }
+            val matchesQuery = query.isBlank() ||
+                app.appName.contains(query, ignoreCase = true) ||
+                (app.packageName?.contains(query, ignoreCase = true) == true)
+            matchesType && matchesQuery
+        }
+        mApps.clear()
+        mApps.addAll(filtered)
+        mAdapter?.notifyDataSetChanged()
+    }
+
     private fun refreshList() {
         val thread: Thread = object : Thread() {
             override fun run() {
@@ -598,8 +572,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 //sort by installed data descending as default
                 mApps.sortWith(Comparator { o1: AppInfo, o2: AppInfo -> if (o1.firstInstallTime < o2.firstInstallTime) 1 else -1 })
-                mAppsCopy = mApps
+                allApps = ArrayList(mApps)
+                mAppsCopy = ArrayList(allApps)
                 runOnUiThread {
+                    applyAppFilters()
                     mAdapter!!.notifyDataSetChanged()
                     binding.toolbar.imgbtnBack.visibility = View.GONE
                     binding.toolbar.imgbtnDelete.visibility = View.GONE
