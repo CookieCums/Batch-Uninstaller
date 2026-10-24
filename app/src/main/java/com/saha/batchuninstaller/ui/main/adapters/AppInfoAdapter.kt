@@ -44,6 +44,7 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
         holder.mTvPackageName.text = app.packageName ?: mContext.getString(R.string.package_unknown)
         holder.mTvAppDate.text = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date(app.firstInstallTime))
 
+        holder.mTvDebloatInfo.visibility = if (app.color == R.color.backgroundSelected) View.VISIBLE else View.GONE
         val entry = app.packageName?.let { debloatEntries[it] }
         if (entry == null) {
             holder.mTvDebloatInfo.text = mContext.getString(R.string.debloat_no_match)
