@@ -15,13 +15,11 @@ import com.saha.batchuninstaller.R
 import com.saha.batchuninstaller.debloat.DebloatRisk
 import com.saha.batchuninstaller.debloat.UadPackageRecord
 import com.saha.batchuninstaller.debloat.UadRiskMapper
-import github.nisrulz.recyclerviewhelper.RVHAdapter
-import github.nisrulz.recyclerviewhelper.RVHViewHolder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<AppInfo>) : RecyclerView.Adapter<AppInfoAdapter.ItemViewHolder>(), RVHAdapter {
+class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<AppInfo>, private val onItemClick: (Int) -> Unit) : RecyclerView.Adapter<AppInfoAdapter.ItemViewHolder>() {
     private var debloatEntries: Map<String, UadPackageRecord> = emptyMap()
 
     fun updateDebloatEntries(entries: Map<String, UadPackageRecord>) {
@@ -31,7 +29,7 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.app_list_item, parent, false)
-        return ItemViewHolder(view)
+        val holder = ItemViewHolder(view)\n        view.setOnClickListener {\n            val position = holder.bindingAdapterPosition\n            if (position != RecyclerView.NO_POSITION) onItemClick(position)\n        }\n        return holder
     }
 
     @Throws(Resources.NotFoundException::class)
@@ -76,7 +74,7 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean = false
     override fun onItemDismiss(position: Int, direction: Int) = notifyDataSetChanged()
 
-    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), RVHViewHolder {
+    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mLayoutItem: RelativeLayout = itemView.findViewById(R.id.layout_appitem)
         val mTvAppName: TextView = itemView.findViewById(R.id.tv_appname)
         val mTvAppSize: TextView = itemView.findViewById(R.id.tv_appsize)
