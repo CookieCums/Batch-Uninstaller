@@ -18,7 +18,6 @@ package com.saha.batchuninstaller.utils
 
 import android.content.pm.ApplicationInfo
 import android.util.Log
-import com.stericson.RootTools.RootTools
 import java.io.IOException
 
 /**
@@ -26,22 +25,10 @@ import java.io.IOException
  */
 object RootUtils {
 	private fun uninstallSystemAppRoot(pkg: ApplicationInfo?): Boolean {
-		val sourceDir = pkg!!.sourceDir
-		val dataDir = pkg.dataDir
-		Log.d("UNINSTALL","Dirs : $sourceDir $dataDir")
-		RootTools.debugMode = false
-		//Lets try the pm uninstall method here as well,
-		//at least it can revert back to the default state, or deactivate
-		val pm_status = uninstallSystemAppRoot2(pkg)
-		Log.d("UNINSTALL","PM UNINSTALL: $pm_status")
-		/*
-		TODO: There's an issue here, even if the directory or file isn't deleted
-		This  deleteFileOrDirectory function is returning true, maybe need a new function.
-		 */
-		val delete_files_status = (RootTools.deleteFileOrDirectory(sourceDir, true)
-				&& RootTools.deleteFileOrDirectory(dataDir, true))
-		return delete_files_status or pm_status
-	}
+        // Only remove the package for Android user 0. Never delete system APK/data paths:
+        // that can damage the OS and is not equivalent to pm uninstall.
+        return uninstallSystemAppRoot2(pkg)
+    }
 
 	private fun uninstallSystemAppRoot2(pkg: ApplicationInfo?): Boolean {
 		var status = false
