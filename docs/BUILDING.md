@@ -2,7 +2,7 @@
 
 ## Local build
 
-Use a JDK compatible with the checked-in Gradle wrapper and Android Gradle Plugin. The legacy baseline is Gradle 7.4, Android Gradle Plugin 7.3.1, Kotlin 1.7.20, and compile SDK 33. Install Android SDK platform 33 and required build tools, then run:
+Use a JDK 17 (the CI runner uses JDK 17; Gradle 7.4 supports running on Java 17) and Android Gradle Plugin. The legacy baseline is Gradle 7.4, Android Gradle Plugin 7.3.1, Kotlin 1.7.20, and compile SDK 33. Install Android SDK platform 33 and required build tools, then run:
 
 ```sh
 ./gradlew testDebugUnitTest lintDebug assembleDebug
