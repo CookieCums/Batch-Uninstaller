@@ -62,6 +62,9 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
 	private var mAdapter: AppInfoAdapter? = null
 	private var mApps: ArrayList<AppInfo> = arrayListOf()
+    private var allApps: ArrayList<AppInfo> = arrayListOf()
+    private var searchQuery: String = ""
+    private var appFilter: Int = 2
     private lateinit var mAppsCopy : ArrayList<AppInfo>
 	private var mPkgs: List<String> = arrayListOf()
 	private var mFreeApps: ArrayList<ApplicationInfo> = arrayListOf()
