@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<AppInfo>, private val onItemClick: (Int) -> Unit) : RecyclerView.Adapter<AppInfoAdapter.ItemViewHolder>() {
+class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<AppInfo>, private val onItemClick: (Int) -> Unit = {}) : RecyclerView.Adapter<AppInfoAdapter.ItemViewHolder>() {
     private var debloatEntries: Map<String, UadPackageRecord> = emptyMap()
 
     fun updateDebloatEntries(entries: Map<String, UadPackageRecord>) {
@@ -76,9 +76,6 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
     }
 
     override fun getItemCount(): Int = mAppsList.size
-    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean = false
-    override fun onItemDismiss(position: Int, direction: Int) = notifyDataSetChanged()
-
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mLayoutItem: RelativeLayout = itemView.findViewById(R.id.layout_appitem)
         val mTvAppName: TextView = itemView.findViewById(R.id.tv_appname)
@@ -87,7 +84,5 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
         val mTvPackageName: TextView = itemView.findViewById(R.id.tv_package_name)
         val mTvDebloatInfo: TextView = itemView.findViewById(R.id.tv_debloat_info)
         val mImgIcon: ImageView = itemView.findViewById(R.id.img_icon)
-        override fun onItemSelected(actionstate: Int) = Unit
-        override fun onItemClear() = Unit
     }
 }
