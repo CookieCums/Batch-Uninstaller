@@ -2,24 +2,34 @@
 
 ## Latest verified GitHub Actions run
 
-- Run: https://github.com/CookieCums/Batch-Uninstaller/actions/runs/40089402687
-- Branch: `modernization/uad-ng-ui`
-- Commit: `fc4a5189b2b7e0cdee686b5bc3e3f4ab4b82a340`
+- Push run: https://github.com/CookieCums/Batch-Uninstaller/actions/runs/40109610751
+- Pull-request run: https://github.com/CookieCums/Batch-Uninstaller/actions/runs/40109614049
+- Branch: `appsieve-redesign`
+- Commit: `c107aa5e5331b7c5861475140022b5fc0e9b0bc0`
 - Overall result: **success**
-- Unit tests: **passed**. The UAD parser test suite reports 5 tests, 0 failures, 0 errors; the existing example unit test also passed.
-- Android lint: **passed** with 0 errors and 55 warnings. Remaining warnings include legacy/deprecated APIs and dependencies that are not build-blocking; see the uploaded lint report.
+- Unit tests: **passed**, including parser/category-array behavior, conservative risk merging, cache-format migration, and SHA-256 backup integrity tests.
+- Android lint: **passed**. Legacy/deprecated APIs still produce warnings; see the workflow artifact report.
 - Debug APK: **assembled successfully**.
 - Artifact: [appsieve-debug-and-reports](https://github.com/CookieCums/Batch-Uninstaller/actions/runs/40089402687/artifacts/12557499483)
 - APK path in artifact ZIP: `outputs/apk/debug/app-debug.apk`
-- APK SHA-256: `2d03027113f04ebfedb232d9d99a19083139c35d76e113e759c68e24c324e9d1`
-- Build type: debug build, signed by Android Gradle's automatically generated debug key.
+- Build type: debug build, signed by Android Gradle's automatically generated debug key. This verification predates the new uninstall-mode integration commit; download the newest successful workflow artifact before testing that feature.
 
 ## Checks performed
 
 - Gradle wrapper and dependency resolution completed in GitHub Actions.
-- UAD database parser unit tests cover representative metadata, null optional arrays, risk mapping, invalid package identifiers, and malformed/empty responses.
+- Database parser tests cover category arrays, optional metadata, risk mapping, invalid identifiers, malformed/empty responses, restrictive duplicate merging, and old-cache migration.
+- Restore tests cover stable SHA-256 values, modified backup detection, and missing files. Command builder tests cover both modes and shell-injection rejection.
 - Android lint completed with no errors.
 - `assembleDebug` completed successfully and produced a verifiable APK artifact.
+
+## Manual checks for the new uninstall workflow
+
+- On a test device with root, select a disposable user app in Restorable mode. Confirm a `restore.json` and verified base/split APK copies are created before the app is removed and the restore point row is stored.
+- Fill or restrict backup storage and repeat; confirm that Restorable mode aborts before any uninstall command when preflight fails, and skips an app if its copy/hash verification fails.
+- Select Permanent mode; verify the checkbox is mandatory and batches of 10+ also require the exact selected count. Verify the history preference records successful removals only.
+- On a non-root device, verify system apps cannot enter the selection and user apps use the standard per-app Android uninstall confirmation.
+- Check that system-app removal uses per-user package-manager commands; no feature should delete APKs from `/system` or `/product`.
+- Restore Center, package installation on restore, restoring app data, and physical-device behavior are not yet validated or fully implemented.
 
 ## Runtime checks
 

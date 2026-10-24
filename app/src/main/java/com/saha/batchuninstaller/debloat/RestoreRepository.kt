@@ -227,6 +227,18 @@ class RestoreRepository(
         }
     }
 
+    /** Removes saved files and the Room row. Call from a background thread. */
+    fun deleteBackup(point: RestorePoint): Boolean {
+        val directory = File(point.backupPath)
+        if (directory.exists() && !directory.deleteRecursively()) return false
+        return try {
+            database.restorePointDao().delete(point)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     private fun apkFiles(application: ApplicationInfo): List<File> {
         val paths = LinkedHashSet<String>()
         application.sourceDir?.takeIf { it.isNotBlank() }?.let { paths.add(it) }

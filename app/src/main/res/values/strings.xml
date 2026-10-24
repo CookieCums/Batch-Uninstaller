@@ -127,4 +127,28 @@
         <item>DAY</item>
         <item>NIGHT</item>
     </string-array>
+    <string name="uninstall_mode_dialog_title">Uninstall apps</string>
+    <string name="uninstall_selection_summary">Selected %1$d apps: %2$s</string>
+    <string name="uninstall_mode_restorable">Restorable</string>
+    <string name="uninstall_mode_restorable_description">Back up the installed APKs first. If a backup cannot be verified, that app will be skipped.</string>
+    <string name="uninstall_mode_permanent">Permanent</string>
+    <string name="uninstall_mode_permanent_description">Keeps no APK or data copy. AppSieve cannot restore it; system apps may return after a reset or update.</string>
+    <string name="uninstall_mode_permanent_ack">I understand this cannot be restored from AppSieve.</string>
+    <string name="uninstall_mode_type_count">Type the number of apps to confirm</string>
+    <string name="uninstall_restorable_button">Uninstall %1$d apps (restorable)</string>
+    <string name="uninstall_permanent_button">Delete %1$d apps permanently</string>
+    <string name="uninstall_mode_prepare_backup">Checking backup space…</string>
+    <string name="uninstall_mode_preparing_app">Preparing %1$s…</string>
+    <string name="uninstall_mode_root_required">System apps require root access. No apps were removed.</string>
+    <string name="uninstall_mode_no_apps">Select at least one app to continue.</string>
+    <string name="uninstall_mode_space_failed">Restorable uninstall stopped before removing any apps: %1$s</string>
+    <string name="uninstall_mode_backup_failed">Backup failed; %1$s was left installed. %2$s</string>
+    <string name="uninstall_mode_delete_failed">Could not uninstall %1$s. The app was left installed.</string>
+    <string name="uninstall_mode_no_backup">Permanent mode keeps no backup. System apps may return after a factory reset or system update.</string>
+    <string name="uninstall_summary_more">%1$s and %2$d more</string>
+    <string name="uninstall_batch_result">Removed %1$d apps. %2$d failed or were skipped.</string>
+    <string name="uninstall_batch_cancelled">Uninstall stopped after the current app.</string>
+    <string name="restore_backup_folder_unavailable">Backup folder is unavailable.</string>
+    <string name="restore_center_title">Restore Center</string>
+    <string name="restore_center_empty">Nothing to restore yet. Apps removed in Restorable mode will appear here.</string>
 </resources>

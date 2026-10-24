@@ -10,10 +10,10 @@ The app is a Kotlin Android Views application with a single large `MainActivity`
 - **Installed package inventory:** PackageManager-backed scan; reports only packages the OS exposes to this app.
 - **Debloat repository:** Fetches and validates five category arrays from MuntashirAkon/android-debloat-list; returns typed package records and per-file revision metadata.
 - **Cache:** Bundled offline category snapshots plus a staged last-known-good category directory and per-file ETags/successful-check timestamp.
-- **Restore foundation:** A Room `RestorePoint` table (migration 1→2), per-app APK copy metadata, `restore.json`, and a SHA-256 verification helper. The backup repository returns a failure instead of authorizing uninstall when any copy cannot be verified.
+- **Restore/uninstall:** A Room `RestorePoint` table (migration 1→2), per-app APK/split copy metadata, `restore.json`, SHA-256 verification, a Restorable/Permanent confirmation selector, root command interface, and serial uninstall flow. Restorable mode preflights space and skips apps whose backup cannot be verified. The Restore Center UI, APK installation workflow, and optional data archives are still outstanding.
 - **Risk mapping:** Pure function translating the upstream `removal` field into conservative display categories.
 - **Settings:** Preferences for theme and database update interval.
-- **Operations:** Existing standard uninstall intents and root-based behavior remain separate from community recommendations. All destructive actions require user confirmation.
+- **Operations:** Root commands are behind `RootExecutor`; validated package identifiers are required before shell commands are built. Restorable app removal is permitted only after verified APK backups; permanent mode requires an explicit checkbox and, for batches of 10+, typing the batch count. System APK files are never deleted from `/system` or `/product`.
 - **CI/tests:** Unit tests validate parsing, matching, and risk mapping; Actions builds and archives a debug APK.
 
 ## Data flow

@@ -1,67 +1,36 @@
-/*******************************************************************************
+/*
  * This file is part of Batch Uninstaller.
  *
  * Batch Uninstaller is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
- * Batch Uninstaller is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Batch Uninstaller.  If not, see <http:></http:>//www.gnu.org/licenses/>.
  */
 package com.saha.batchuninstaller.utils
 
 import android.content.pm.ApplicationInfo
 import android.util.Log
-import java.io.IOException
+import com.saha.batchuninstaller.debloat.UninstallMode
 
-/**
- * Created by sarbajit on 22/5/18.
- */
 object RootUtils {
-	private fun uninstallSystemAppRoot(pkg: ApplicationInfo?): Boolean {
-        // Only remove the package for Android user 0. Never delete system APK/data paths:
-        // that can damage the OS and is not equivalent to pm uninstall.
-        return uninstallSystemAppRoot2(pkg)
+    private const val TAG = "AppSieveRoot"
+
+    fun ApplicationInfo.uninstallAppRoot(
+        mode: UninstallMode,
+        rootExecutor: RootExecutor = SuRootExecutor
+    ): Boolean {
+        val isSystemApp = (flags and ApplicationInfo.FLAG_SYSTEM) != 0 ||
+            sourceDir.startsWith("/system/") ||
+            sourceDir.startsWith("/product/")
+        val command = UninstallCommandBuilder.build(packageName, isSystemApp, mode)
+        if (command == null) {
+            Log.e(TAG, "Refusing unsafe package name: $packageName")
+            return false
+        }
+        val result = rootExecutor.execute(command)
+        if (!result.success) {
+            Log.e(TAG, "Uninstall failed for $packageName (exit=${result.exitCode}, timeout=${result.timedOut}): ${result.output}")
+        }
+        return result.success
     }
-
-	private fun uninstallSystemAppRoot2(pkg: ApplicationInfo?): Boolean {
-		var status = false
-		try {
-			val commandDelete = arrayOf("su", "-c", """pm uninstall --user 0 ${pkg!!.packageName}""")
-			val process = Runtime.getRuntime().exec(commandDelete)
-			process.waitFor()
-			val i = process.exitValue()
-			if (i == 0) status = true
-		} catch (e: InterruptedException) {
-			e.printStackTrace()
-		} catch (e: IOException) {
-			e.printStackTrace()
-		}
-		return status
-	}
-
-	private fun uninstallUserAppRoot(pkg: ApplicationInfo?): Boolean {
-		var status = false
-		try {
-			val commandDelete = arrayOf("su", "-c", """pm uninstall ${pkg!!.packageName}""")
-			val process = Runtime.getRuntime().exec(commandDelete)
-			process.waitFor()
-			val i = process.exitValue()
-			if (i == 0) status = true
-		} catch (e: InterruptedException) {
-			e.printStackTrace()
-		} catch (e: IOException) {
-			e.printStackTrace()
-		}
-		return status
-	}
-
-	fun ApplicationInfo.uninstallAppRoot() = if (this.sourceDir.startsWith("/system"))
-		RootUtils.uninstallSystemAppRoot(this) else RootUtils.uninstallUserAppRoot(this)
 }
