@@ -8,6 +8,13 @@
     <string name="debloat_no_description">The upstream entry has no description.</string>
     <string name="update_database">Update database now</string>
     <string name="scan_apps_now">Scan installed apps now</string>
+    <string name="database_update_frequency">Database update frequency</string>
+    <string-array name="database_update_frequency_options">
+        <item>Every day</item>
+        <item>Every 3 days</item>
+        <item>Every 7 days</item>
+        <item>Disabled</item>
+    </string-array>
     <string name="database_updated">Debloat database updated</string>
     <string name="database_update_failed">Database update failed; the last valid cache was preserved.</string>
     <string name="database_cache_loaded">Loaded cached debloat data</string>
