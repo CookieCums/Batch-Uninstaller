@@ -61,12 +61,14 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
                 append(risk.displayName)
                 if (source.isNotBlank()) append("  ·  ").append(source)
                 append("\n").append(explanation)
-                if (notes != null) append("\nLabels: ").append(notes)
+                if (notes != null) append("\nTags: ").append(notes)
+                if (!entry.warning.isNullOrBlank()) append("\nWarning: ").append(entry.warning)
                 if (!entry.dependencies.isNullOrEmpty()) append("\nDependencies: ").append(entry.dependencies.joinToString(", "))
                 if (!entry.neededBy.isNullOrEmpty()) append("\nNeeded by: ").append(entry.neededBy.joinToString(", "))
             }
             val background = when (risk) {
                 DebloatRisk.RECOMMENDED -> R.drawable.debloat_info_recommended
+                DebloatRisk.REPLACE -> R.drawable.debloat_info_replace
                 DebloatRisk.CAUTION -> R.drawable.debloat_info_caution
                 DebloatRisk.HIGH_RISK -> R.drawable.debloat_info_high_risk
                 DebloatRisk.UNKNOWN -> R.drawable.debloat_info_background

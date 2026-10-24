@@ -1,0 +1,9 @@
+Android Debloat List data attribution
+
+Source repository: https://github.com/MuntashirAkon/android-debloat-list
+Source branch: master
+Maintainer: MuntashirAkon and project contributors
+License: GNU Affero General Public License version 3.0 (AGPL-3.0). See the upstream repository for its LICENSE and source history.
+
+Bundled snapshot files: aosp.json, carrier.json, google.json, misc.json, oem.json.
+These snapshots are included as an offline first-run fallback. AppSieve checks the raw upstream JSON endpoints when updating the database. The data is community-maintained and is not a guarantee that a package is safe to remove.

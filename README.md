@@ -1,6 +1,6 @@
 # AppSieve (formerly Batch Uninstaller)
 
-AppSieve modernizes the legacy Batch Uninstaller Android app with contextual, community-maintained debloat guidance from [Universal Android Debloater Next Generation (UAD-ng)](https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation).
+AppSieve modernizes the legacy Batch Uninstaller Android app with community-maintained debloat guidance from [MuntashirAkon’s Android Debloat List](https://github.com/MuntashirAkon/android-debloat-list). The list is distributed under **AGPL-3.0**; see the upstream repository and its license for the applicable terms.
 
 > **Caution:** Debloating can break device features or cause instability. UAD-ng recommendations are community-maintained and may not match every device, manufacturer, ROM, or Android version. Review descriptions and warnings before taking action. No recommendation is executed automatically.
 
@@ -11,8 +11,8 @@ AppSieve modernizes the legacy Batch Uninstaller Android app with contextual, co
 - Select an app row to reveal its UAD-ng recommendation card directly below the row.
 - Displays the upstream removal classification, list category, description, labels, dependencies and packages that depend on it where provided.
 - Exact package-ID matching; packages absent from the database are explicitly marked as having no match.
-- Fetches the maintained UAD-ng JSON at runtime over HTTPS.
-- Validated local cache, ETag/Last-Modified conditional requests, bounded download size/timeouts, offline cache use, and background refresh scheduling.
+- Downloads five category JSON files (AOSP, Carrier, Google, Misc and OEM) over HTTPS.
+- Validates all categories before swapping the local cache, with per-file ETags, bounded retries/timeouts, bundled offline snapshots and rollback to the last-known-good data.
 - Separate **Update database now** and **Scan installed apps now** actions.
 - Configurable automatic database refresh: daily, every 3 days, every 7 days, or disabled.
 - Original AppSieve adaptive launcher mark and updated teal design palette.
@@ -40,7 +40,7 @@ See [docs/BUILDING.md](docs/BUILDING.md). The CI workflow runs unit tests, Andro
 
 ## Upstream attribution and licensing
 
-The original Batch Uninstaller project is GPL-3.0; see [LICENSE](LICENSE). UAD-ng is also GPL-3.0 and its community database is maintained in the [UAD-ng repository](https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation). The app fetches the database from the upstream `resources/assets/uad_lists.json` file at runtime rather than treating a bundled snapshot as authoritative.
+The original Batch Uninstaller project is GPL-3.0; see [LICENSE](LICENSE). AppSieve credits Sarbajit Saha’s original project. Debloat data comes from [MuntashirAkon/android-debloat-list](https://github.com/MuntashirAkon/android-debloat-list), distributed under AGPL-3.0; offline snapshots and their attribution are retained in `app/src/main/assets/debloat/`. Online refreshes use the upstream raw JSON endpoints.
 
 ## Known limitations
 

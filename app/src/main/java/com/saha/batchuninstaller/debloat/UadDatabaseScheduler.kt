@@ -16,13 +16,14 @@ object UadDatabaseScheduler {
 
     fun schedule(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        if (!prefs.getBoolean(AUTO_UPDATE, true)) {
+        // Automatic refresh is opt-in; the default interval is weekly on an unmetered network.
+        if (!prefs.getBoolean(AUTO_UPDATE, false)) {
             WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
             return
         }
-        val days = prefs.getInt(INTERVAL_DAYS, 1).coerceIn(1, 7)
+        val days = prefs.getInt(INTERVAL_DAYS, 7).coerceIn(1, 7)
         val request = PeriodicWorkRequestBuilder<UadDatabaseWorker>(days.toLong(), TimeUnit.DAYS)
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.UNMETERED).build())
             .build()
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             WORK_NAME, ExistingPeriodicWorkPolicy.REPLACE, request

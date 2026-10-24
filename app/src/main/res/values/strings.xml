@@ -15,8 +15,9 @@
         <item>Every 7 days</item>
         <item>Disabled</item>
     </string-array>
-    <string name="database_updated">Debloat database updated</string>
-    <string name="database_update_failed">Database update failed; the last valid cache was preserved.</string>
+    <string name="database_updated">Debloat database updated: %1$d entries</string>
+    <string name="database_up_to_date">Database is already up to date: %1$d entries</string>
+    <string name="database_update_failed">Database update failed. Previous data was kept. Details: %1$s</string>
     <string name="database_cache_loaded">Loaded cached debloat data</string>
 
     <!-- General -->
@@ -70,8 +71,8 @@
     <!-- About -->
     <string name="about">About</string>
     <string name="about_text">
-        A simple batch uninstaller app to uninstall multiple apps at once.
-        Works best if phone is rooted.
+        A batch uninstaller based on Batch Uninstaller by Sarbajit Saha.
+        Works best if phone is rooted. Debloat information is from MuntashirAkon’s Android Debloat List (AGPL-3.0).
         \n\nThis app is open-source and can be found on GitHub!
     </string>
     <string name="github">GitHub Link</string>

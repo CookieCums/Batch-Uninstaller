@@ -519,12 +519,26 @@ class MainActivity : AppCompatActivity() {
                 uadRecords = fresh.packages
                 runOnUiThread {
                     mAdapter?.updateDebloatEntries(uadRecords)
-                    if (showResult) Toast.makeText(applicationContext, R.string.database_updated, Toast.LENGTH_SHORT).show()
+                    if (showResult) {
+                        val message = if (fresh.fromCache) {
+                            getString(R.string.database_up_to_date, fresh.packages.size)
+                        } else {
+                            getString(R.string.database_updated, fresh.packages.size)
+                        }
+                        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "UAD-ng database refresh failed", e)
                 runOnUiThread {
-                    if (showResult) Toast.makeText(applicationContext, R.string.database_update_failed, Toast.LENGTH_LONG).show()
+                    if (showResult) {
+                        val detail = e.message?.takeIf { it.isNotBlank() } ?: e.javaClass.simpleName
+                        Toast.makeText(
+                            applicationContext,
+                            getString(R.string.database_update_failed, detail.take(220)),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }.start()
