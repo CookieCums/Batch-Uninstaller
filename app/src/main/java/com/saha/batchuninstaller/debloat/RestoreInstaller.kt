@@ -9,6 +9,7 @@ import android.app.PendingIntent
 import com.saha.batchuninstaller.RoomStorage.RestorePoint
 import com.saha.batchuninstaller.utils.RootExecutor
 import com.saha.batchuninstaller.utils.SuRootExecutor
+import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 
@@ -101,7 +102,7 @@ class RestoreInstaller(
             if (sessionId >= 0) {
                 try { appContext.packageManager.packageInstaller.abandonSession(sessionId) } catch (_: Exception) { }
             }
-            RestoreInstallResult.Failure(e.message?.takeIf { it.isNotBlank() } ?: e.javaClass.simpleName)
+            return RestoreInstallResult.Failure(e.message?.takeIf { it.isNotBlank() } ?: e.javaClass.simpleName)
         }
     }
 }
