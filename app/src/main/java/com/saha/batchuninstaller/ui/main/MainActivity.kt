@@ -163,7 +163,8 @@ class MainActivity : AppCompatActivity() {
         loadDebloatDatabase()
         mRvAppList.layoutManager = LinearLayoutManager(this)
         mRvAppList.adapter = mAdapter
-        mRvAppList.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))\n        binding.toolbar.imgbtnBack.setOnClickListener {
+        mRvAppList.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+        binding.toolbar.imgbtnBack.setOnClickListener {
             mFreeApps.clear()
             systemAppUninstalled = false
             binding.toolbar.imgbtnBack.visibility = View.GONE
