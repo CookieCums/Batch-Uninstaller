@@ -9,11 +9,20 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_apps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search apps or package IDs"
+        android:contentDescription="Search installed applications" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/layout_swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@id/search_apps">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_applist"
