@@ -110,7 +110,12 @@ class ProfileDialogFragment : DialogFragment () {
     }
 
     private fun createProfileDialogPrompt() {
-        val mFreeApps : ArrayList<String> = ArrayList()
+        val mFreeApps: ArrayList<String> = ArrayList()
+        val dialogView = layoutInflater.inflate(R.layout.profile_create_dialog, null) as View
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setView(dialogView).setCancelable(false)
+        val dialog = builder.create()
+        val mRvAppList = dialogView.findViewById<RecyclerView>(R.id.rv_profile_create_applist)
         val mAdapter = AppInfoAdapter(requireContext(), mApps) { position ->
             val app = mApps[position]
             app.color = if (app.color == R.color.backgroundSelected) R.color.backgroundPrimary else R.color.backgroundSelected
@@ -121,12 +126,6 @@ class ProfileDialogFragment : DialogFragment () {
                 app.packageName?.let { mFreeApps.add(it) }
             }
         }
-        val dialogView = layoutInflater.inflate(
-            R.layout.profile_create_dialog, null) as View
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setView(dialogView).setCancelable(false)
-        val dialog = builder.create()
-        val mRvAppList = dialogView.findViewById<RecyclerView>(R.id.rv_profile_create_applist)
         mRvAppList.layoutManager = LinearLayoutManager(requireContext())
         mRvAppList.adapter = mAdapter
         mRvAppList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
