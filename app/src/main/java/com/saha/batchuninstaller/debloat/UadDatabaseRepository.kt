@@ -60,10 +60,8 @@ class UadDatabaseRepository(context: Context) {
             cacheFile.parentFile?.mkdirs()
             val temp = File(cacheFile.parentFile, cacheFile.name + ".tmp")
             temp.writeText(json, Charsets.UTF_8)
-            if (cacheFile.exists() && !cacheFile.delete()) {
-                temp.delete()
-                throw IOException("Could not replace previous database cache")
-            }
+            // Rename over the old cache atomically where the filesystem supports it.
+            // Never delete the known-good cache before the replacement is ready.
             if (!temp.renameTo(cacheFile)) {
                 temp.delete()
                 throw IOException("Could not commit validated database cache")
