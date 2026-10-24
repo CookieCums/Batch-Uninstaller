@@ -227,6 +227,62 @@ class RestoreRepository(
         }
     }
 
+    /**
+     * Reads the restore manifest, validates every file hash/path, and checks the APK package ID
+     * and signing certificate against the stored restore-point metadata. Call off the UI thread.
+     */
+    @Throws(IOException::class)
+    fun verifiedManifest(point: RestorePoint): RestoreManifest {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            throw IOException("Backup verification must run in the background.")
+        }
+        val directory = File(point.backupPath).canonicalFile
+        if (!directory.isDirectory) throw IOException("The restore-point folder is missing.")
+        val manifestFile = File(directory, "restore.json")
+        if (!manifestFile.isFile) throw IOException("restore.json is missing from this restore point.")
+
+        val manifest = try {
+            json.fromJson(manifestFile.readText(Charsets.UTF_8), RestoreManifest::class.java)
+        } catch (e: Exception) {
+            throw IOException("restore.json is malformed.", e)
+        } ?: throw IOException("restore.json is empty.")
+
+        if (manifest.id != point.id || manifest.packageName != point.packageName) {
+            throw IOException("The restore metadata does not match the selected restore point.")
+        }
+        if (manifest.files.isEmpty()) throw IOException("No APK files are recorded in restore.json.")
+        val allowedFileName = Regex("""^(base\.apk|split_[0-9]{2}\.apk)$""")
+        if (manifest.files.map { it.fileName }.distinct().size != manifest.files.size) {
+            throw IOException("The restore metadata contains duplicate APK file names.")
+        }
+        if (manifest.files.none { it.fileName == "base.apk" }) {
+            throw IOException("The base APK is missing from the restore metadata.")
+        }
+
+        for (entry in manifest.files) {
+            if (!allowedFileName.matches(entry.fileName)) throw IOException("Invalid backup file name.")
+            val file = File(directory, entry.fileName).canonicalFile
+            if (file.parentFile != directory || !file.isFile) {
+                throw IOException("A backup file is missing or points outside the restore folder.")
+            }
+            if (file.length() != entry.sizeBytes || !RestoreFileIntegrity.matches(file, entry.sha256)) {
+                throw IOException("Backup hash mismatch for ${entry.fileName}. No app was installed.")
+            }
+        }
+
+        val baseApk = File(directory, "base.apk")
+        val archived = packageManager.getPackageArchiveInfo(baseApk.absolutePath, PackageManager.GET_SIGNATURES)
+            ?: throw IOException("Android could not read the saved APK.")
+        if (archived.packageName != point.packageName || manifest.packageName != archived.packageName) {
+            throw IOException("The saved APK package name does not match this restore point.")
+        }
+        val archivedDigest = signingDigest(archived)
+        if (archivedDigest.isBlank() || archivedDigest != point.signingDigest || archivedDigest != manifest.signingDigest) {
+            throw IOException("The saved APK signing certificate does not match this restore point.")
+        }
+        return manifest
+    }
+
     /** Removes saved files and the Room row. Call from a background thread. */
     fun deleteBackup(point: RestorePoint): Boolean {
         val directory = File(point.backupPath)
