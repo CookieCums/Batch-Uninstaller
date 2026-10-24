@@ -25,6 +25,4 @@
         android:layout_toRightOf="@id/img_icon"
         android:text="@string/test_app"
         android:textSize="18sp" />
-
-   />
 </RelativeLayout>

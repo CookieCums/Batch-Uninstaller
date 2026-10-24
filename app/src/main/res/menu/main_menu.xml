@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/update_database" android:title="@string/update_database" />
+    <item android:id="@+id/scan_apps_now" android:title="@string/scan_apps_now" />
+    <item android:id="@+id/database_interval" android:title="@string/database_update_frequency" />
     <item
         android:id="@+id/nightmode"
         android:title="@string/night_mode" />

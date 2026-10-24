@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF5722</color>
-    <color name="colorPrimaryDark">#FF371B</color>
-    <color name="colorAccent">#328B6D</color>
-    <color name="textColorPrimary">#000</color>
-    <color name="textColorSecondary">#fff</color>
-    <color name="backgroundPrimary">#fff</color>
-    <color name="backgroundSelected">#bbb</color>
+    <!-- AppSieve teal fallback palette; Android 12+ may replace it with dynamic color. -->
+    <color name="colorPrimary">#2F9E8F</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#BFF2E8</color>
+    <color name="colorOnPrimaryContainer">#003731</color>
+    <color name="colorPrimaryDark">#1C6F66</color>
+    <color name="colorSecondary">#4A6360</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorSecondaryContainer">#DCE8E4</color>
+    <color name="colorOnSecondaryContainer">#101F1D</color>
+    <color name="colorTertiary">#456179</color>
+    <color name="colorOnTertiary">#FFFFFF</color>
+    <color name="colorTertiaryContainer">#D0E4FA</color>
+    <color name="colorOnTertiaryContainer">#0D1D2B</color>
+    <color name="colorError">#BA1A1A</color>
+    <color name="colorOnError">#FFFFFF</color>
+    <color name="colorErrorContainer">#FFDAD6</color>
+    <color name="colorOnErrorContainer">#410002</color>
+    <color name="colorSurface">#F4FBF9</color>
+    <color name="colorOnSurface">#1A2120</color>
+    <color name="colorSurfaceVariant">#DDE5E2</color>
+    <color name="colorOnSurfaceVariant">#4A6360</color>
+    <color name="colorOutline">#74817E</color>
+    <color name="colorAccent">#2F9E8F</color>
+    <color name="textColorPrimary">#1A2120</color>
+    <color name="textColorSecondary">#4A6360</color>
+    <color name="backgroundPrimary">#F4FBF9</color>
+    <color name="backgroundSelected">#DCE8E4</color>
+    <color name="search_surface">#E8F0EE</color>
+    <color name="debloat_recommended_container">#D9F1E9</color>
+    <color name="debloat_replace_container">#DCEBFF</color>
+    <color name="debloat_caution_container">#FFF0D2</color>
+    <color name="debloat_unsafe_container">#FCE4E4</color>
+    <color name="debloat_unknown_container">#E8F0EE</color>
 </resources>

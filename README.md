@@ -1,46 +1,49 @@
-# Batch Uninstaller
-An Android app that allows uninstallation of multiple app at once (only if root permission is available, otherwise need to confirm each time).
+# AppSieve (formerly Batch Uninstaller)
 
-<a href="https://f-droid.org/packages/com.saha.batchuninstaller/" target="_blank">
-<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80"/></a>
+AppSieve modernizes the legacy Batch Uninstaller Android app with community-maintained debloat guidance from [MuntashirAkon’s Android Debloat List](https://github.com/MuntashirAkon/android-debloat-list). The list is distributed under **AGPL-3.0**; see the upstream repository and its license for the applicable terms.
 
-<img src="screenshots/1.png" width="300">
+> **Caution:** Debloating can break device features or cause instability. UAD-ng recommendations are community-maintained and may not match every device, manufacturer, ROM, or Android version. Review descriptions and warnings before taking action. No recommendation is executed automatically.
 
-## Description
+## Current features
 
-Batch Uninstaller allows you to uninstall multiple apps at once. If root permission is not available, you can still delete multiple apps a lot quicker than you can using the native android implementation.
- 
-However, you will be prompted for each app uninstalled. Non Root users can not uninstall system apps. This is a limitation with the Android Operating system.
+- Installed application inventory with icons, package IDs, install dates and APK sizes.
+- Existing sorting, system/user app filters, saved profiles, batch uninstall workflow and root-aware behavior.
+- Select an app row to reveal its UAD-ng recommendation card directly below the row.
+- Displays the upstream removal classification, list category, description, labels, dependencies and packages that depend on it where provided.
+- Exact package-ID matching; packages absent from the database are explicitly marked as having no match.
+- Downloads five category JSON files (AOSP, Carrier, Google, Misc and OEM) over HTTPS.
+- Validates all categories before swapping the local cache, with per-file ETags, bounded retries/timeouts, bundled offline snapshots and rollback to the last-known-good data.
+- Separate **Update database now** and **Scan installed apps now** actions.
+- Configurable automatic database refresh: daily, every 3 days, every 7 days, or disabled.
+- Original AppSieve adaptive launcher mark and updated teal design palette.
 
+## Android compatibility
 
-## Features
+- Minimum SDK: 16 (Android 4.1), retained from the legacy app.
+- Target/compile SDK: 33 in the initial modernization branch.
+- Application ID remains `com.saha.batchuninstaller` to avoid creating a separate Android app identity.
+- Standard uninstall requests still rely on Android confirmation. Silent system-package management requires appropriate privilege and is not granted by the UAD-ng database.
 
-* Uninstall multiple apps at once
-* Sort by date, name and size
-* Filter by user and system apps
-* Know how much space you are freeing up during the selection process
-* Displays application name, install date and size
+## Build
 
-## Todo
+See [docs/BUILDING.md](docs/BUILDING.md). The CI workflow runs unit tests, Android lint, and debug APK assembly on GitHub Actions and uploads the debug APK and reports as artifacts.
 
-* Backup system apps before uninstalling for rooted phones
+## Documentation
 
-## Feature Requests
+- [Research](docs/RESEARCH.md)
+- [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Database integration and attribution](docs/DATABASE.md)
+- [Building](docs/BUILDING.md)
+- [Signing](docs/SIGNING.md)
+- [Testing and verification](docs/TESTING.md)
 
-All planned enhancements are here: https://github.com/sarbajitsaha/Batch-Uninstaller/labels/enhancement
+## Upstream attribution and licensing
 
-If you can't see a similar request, [request yours](https://github.com/sarbajitsaha/Batch-Uninstaller/issues/new) today!
+The original Batch Uninstaller project is GPL-3.0; see [LICENSE](LICENSE). AppSieve credits Sarbajit Saha’s original project. Debloat data comes from [MuntashirAkon/android-debloat-list](https://github.com/MuntashirAkon/android-debloat-list), distributed under AGPL-3.0; offline snapshots and their attribution are retained in `app/src/main/assets/debloat/`. Online refreshes use the upstream raw JSON endpoints.
 
+## Known limitations
 
-## Screenshots
-
-<!--<img src="screenshots/1.png" width="200" hspace="20" align="left">-->
-<img src="screenshots/2.png" width="200" hspace="20" align="left">
-<img src="screenshots/3.png" width="200" hspace="20" align="left">
-<img src="screenshots/4.png" width="200" hspace="20" align="left">
-<img src="screenshots/5.png" width="200" hspace="20">
-
-## License
-
-Batch Uninstaller is licensed under the GPL, version 3. A copy of the license is
-included in [LICENSE.txt](LICENSE.txt).
+- The first modernization increment keeps the legacy Android Views architecture; a full Compose/Material 3 migration is not yet complete.
+- Root execution remains device-specific and should be reviewed separately before relying on it for critical packages.
+- CI build status and runtime behavior must be verified from actual workflow results; passing compilation alone does not validate every device-specific operation.

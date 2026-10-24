@@ -16,8 +16,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.RoomDatabase
 import com.saha.batchuninstaller.AppInfo
@@ -28,9 +28,6 @@ import com.saha.batchuninstaller.ui.main.adapters.AppInfoAdapter
 import com.saha.batchuninstaller.utils.PackageUtils
 import com.saha.batchuninstaller.utils.PackageUtils.moveBatchUninstallerToEnd
 import com.stericson.RootTools.RootTools
-import github.nisrulz.recyclerviewhelper.RVHItemClickListener
-import github.nisrulz.recyclerviewhelper.RVHItemDividerDecoration
-import github.nisrulz.recyclerviewhelper.RVHItemTouchHelperCallback
 import kotlin.collections.ArrayList
 
 
@@ -113,33 +110,25 @@ class ProfileDialogFragment : DialogFragment () {
     }
 
     private fun createProfileDialogPrompt() {
-        var mFreeApps : ArrayList<String> = ArrayList()
-        var mAdapter = AppInfoAdapter(requireContext(), mApps)
-        val dialogView = layoutInflater.inflate(
-            R.layout.profile_create_dialog, null) as View
+        val mFreeApps: ArrayList<String> = ArrayList()
+        val dialogView = layoutInflater.inflate(R.layout.profile_create_dialog, null) as View
         val builder = AlertDialog.Builder(requireContext())
         builder.setView(dialogView).setCancelable(false)
         val dialog = builder.create()
         val mRvAppList = dialogView.findViewById<RecyclerView>(R.id.rv_profile_create_applist)
+        val mAdapter = AppInfoAdapter(requireContext(), mApps) { position ->
+            val app = mApps[position]
+            app.color = if (app.color == R.color.backgroundSelected) R.color.backgroundPrimary else R.color.backgroundSelected
+            mRvAppList.adapter?.notifyItemChanged(position)
+            if (mFreeApps.contains(app.packageName)) {
+                mFreeApps.remove(app.packageName)
+            } else {
+                app.packageName?.let { mFreeApps.add(it) }
+            }
+        }
         mRvAppList.layoutManager = LinearLayoutManager(requireContext())
         mRvAppList.adapter = mAdapter
-        val callback: ItemTouchHelper.Callback = RVHItemTouchHelperCallback(
-            mAdapter, true, true, true)
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(mRvAppList)
-        mRvAppList.addItemDecoration(
-            RVHItemDividerDecoration(context, LinearLayoutManager.VERTICAL)
-        )
-        mRvAppList.addOnItemTouchListener(RVHItemClickListener(
-            context, RVHItemClickListener.OnItemClickListener { _, position ->
-                mApps[position].color = if (mApps[position].color == R.color.backgroundSelected) R.color.backgroundPrimary else R.color.backgroundSelected
-                mAdapter.notifyItemChanged(position)
-                if (mFreeApps.contains(mApps[position].packageName)) {
-                    mFreeApps.remove(mApps[position].packageName)
-                } else {
-                    mApps[position].packageName?.let { mFreeApps.add(it) }
-                }
-            }))
+        mRvAppList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         val cancelProfileButton = dialogView.findViewById<AppCompatButton>(R.id.cancel_profile_btn)
         cancelProfileButton.setOnClickListener{
             dialog.dismiss()
