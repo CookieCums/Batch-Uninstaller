@@ -43,6 +43,9 @@ import androidx.room.Room
 import com.afollestad.materialdialogs.MaterialDialog
 import com.marcoscg.easylicensesdialog.EasyLicensesDialogCompat
 import com.saha.batchuninstaller.AppInfo
+import com.saha.batchuninstaller.debloat.UadDatabaseRepository
+import com.saha.batchuninstaller.debloat.UadDatabaseScheduler
+import com.saha.batchuninstaller.debloat.UadPackageRecord
 import com.saha.batchuninstaller.BuildConfig
 import com.saha.batchuninstaller.R
 import com.saha.batchuninstaller.RoomStorage.AppDatabase
@@ -76,6 +79,7 @@ class MainActivity : AppCompatActivity() {
 	private var systemAppUninstalled = false
 
     private lateinit var db : AppDatabase
+    private var uadRecords: Map<String, UadPackageRecord> = emptyMap()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,6 +150,7 @@ class MainActivity : AppCompatActivity() {
 
         //populate the recyclerview
         mAdapter = AppInfoAdapter(this, mApps)
+        loadDebloatDatabase()
         mRvAppList.layoutManager = LinearLayoutManager(this)
         mRvAppList.adapter = mAdapter
         val callback: ItemTouchHelper.Callback = RVHItemTouchHelperCallback(
@@ -473,6 +478,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.update_database -> {
+                refreshDebloatDatabase(true)
+                true
+            }
+            R.id.scan_apps_now -> {
+                refreshList()
+                true
+            }
             R.id.about -> {
                 about()
                 true
@@ -515,6 +528,51 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }.show()
+    }
+
+
+    /**
+     * Loads the last validated cache off the UI thread, then attempts an upstream refresh.
+     * Database refresh and installed-package rescanning are intentionally separate actions.
+     */
+    private fun loadDebloatDatabase() {
+        UadDatabaseScheduler.schedule(applicationContext)
+        Thread {
+            val repository = UadDatabaseRepository(applicationContext)
+            val cached = repository.loadCached()
+            if (cached != null) {
+                uadRecords = cached.packages
+                runOnUiThread { mAdapter?.updateDebloatEntries(uadRecords) }
+            }
+            val lastSuccess = repository.lastSuccessfulUpdateMillis()
+            if (cached == null || System.currentTimeMillis() - lastSuccess >= 24L * 60L * 60L * 1000L) {
+                try {
+                    val fresh = repository.refresh()
+                    uadRecords = fresh.packages
+                    runOnUiThread { mAdapter?.updateDebloatEntries(uadRecords) }
+                } catch (e: Exception) {
+                    Log.w(TAG, "UAD-ng database refresh failed; retaining validated cache", e)
+                }
+            }
+        }.start()
+    }
+
+    private fun refreshDebloatDatabase(showResult: Boolean) {
+        Thread {
+            try {
+                val fresh = UadDatabaseRepository(applicationContext).refresh()
+                uadRecords = fresh.packages
+                runOnUiThread {
+                    mAdapter?.updateDebloatEntries(uadRecords)
+                    if (showResult) Toast.makeText(applicationContext, R.string.database_updated, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "UAD-ng database refresh failed", e)
+                runOnUiThread {
+                    if (showResult) Toast.makeText(applicationContext, R.string.database_update_failed, Toast.LENGTH_LONG).show()
+                }
+            }
+        }.start()
     }
 
     private fun refreshList() {
