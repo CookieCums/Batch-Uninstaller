@@ -2,6 +2,10 @@
     <!-- App Name -->
     <string name="app_name">AppSieve</string>
     <string name="app_icon">Application icon</string>
+    <string name="search_apps_hint">Search apps or package IDs</string>
+    <string name="search_apps_content_description">Search installed applications</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="uninstall_selected_apps">Uninstall selected apps</string>
     <string name="package_unknown">Package identifier unavailable</string>
     <string name="debloat_database_loading">Loading community debloat information…</string>
     <string name="debloat_no_match">No UAD-ng entry found for this package. No risk classification is available.</string>

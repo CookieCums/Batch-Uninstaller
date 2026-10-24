@@ -15,7 +15,7 @@ import com.saha.batchuninstaller.R
 import com.saha.batchuninstaller.debloat.DebloatRisk
 import com.saha.batchuninstaller.debloat.UadPackageRecord
 import com.saha.batchuninstaller.debloat.UadRiskMapper
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -40,12 +40,15 @@ class AppInfoAdapter(private val mContext: Context, private val mAppsList: List<
     @Throws(Resources.NotFoundException::class)
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val app = mAppsList[position]
-        holder.mLayoutItem.setBackgroundColor(mContext.resources.getColor(app.color))
+        holder.mLayoutItem.setBackgroundResource(
+            if (app.color == R.color.backgroundSelected) R.drawable.app_item_selected_background
+            else android.R.color.transparent
+        )
         if (app.icon != null) holder.mImgIcon.setImageBitmap(app.icon) else holder.mImgIcon.setImageResource(R.mipmap.ic_launcher_round)
         holder.mTvAppName.text = app.appName
         holder.mTvAppSize.text = Formatter.formatShortFileSize(mContext, app.fileSize)
         holder.mTvPackageName.text = app.packageName ?: mContext.getString(R.string.package_unknown)
-        holder.mTvAppDate.text = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date(app.firstInstallTime))
+        holder.mTvAppDate.text = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(Date(app.firstInstallTime))
 
         holder.mTvDebloatInfo.visibility = if (app.color == R.color.backgroundSelected) View.VISIBLE else View.GONE
         val entry = app.packageName?.let { debloatEntries[it] }
