@@ -27,12 +27,10 @@ jobs:
           distribution: temurin
           java-version: "17"
           cache: gradle
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: platform-tools
-      - name: Install Android platform
-        run: sdkmanager "platforms;android-33" "build-tools;33.0.2"
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+      - name: Install Android SDK components
+        run: sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
       - name: Unit tests
