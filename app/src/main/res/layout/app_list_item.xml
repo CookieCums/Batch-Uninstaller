@@ -4,46 +4,88 @@
     android:id="@+id/layout_appitem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:minHeight="84dp"
+    android:orientation="vertical"
+    android:paddingBottom="10dp">
 
     <ImageView
         android:id="@+id/img_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/app_icon"
         app:srcCompat="@mipmap/ic_launcher_round" />
 
     <TextView
         android:id="@+id/tv_appname"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:layout_toEndOf="@+id/img_icon"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@id/img_icon"
         android:layout_toRightOf="@id/img_icon"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="@string/test_app"
-        android:textSize="18sp" />
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_appname"
-        android:layout_alignStart="@+id/tv_appname"
-        android:layout_alignLeft="@+id/tv_appname"
+        android:layout_below="@id/tv_appname"
+        android:layout_alignStart="@id/tv_appname"
+        android:layout_alignLeft="@id/tv_appname"
+        android:layout_marginTop="3dp"
         android:text="@string/_26_09_1234"
-        android:textSize="16sp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tv_appsize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_date"
-        android:layout_alignStart="@+id/tv_appname"
-        android:layout_alignLeft="@+id/tv_appname"
-        android:layout_marginTop="5dp"
+        android:layout_below="@id/tv_date"
+        android:layout_alignStart="@id/tv_appname"
+        android:layout_alignLeft="@id/tv_appname"
+        android:layout_marginTop="3dp"
         android:text="@string/_45_mb"
-        android:textSize="14sp" />
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_package_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/img_icon"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="middle"
+        android:maxLines="1"
+        android:textSize="11sp"
+        android:textColor="?android:attr/textColorSecondary" />
+
+    <TextView
+        android:id="@+id/tv_debloat_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_package_name"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/debloat_info_background"
+        android:padding="12dp"
+        android:text="@string/debloat_database_loading"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="13sp" />
 </RelativeLayout>
