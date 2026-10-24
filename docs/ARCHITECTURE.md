@@ -10,6 +10,7 @@ The app is a Kotlin Android Views application with a single large `MainActivity`
 - **Installed package inventory:** PackageManager-backed scan; reports only packages the OS exposes to this app.
 - **Debloat repository:** Fetches and validates five category arrays from MuntashirAkon/android-debloat-list; returns typed package records and per-file revision metadata.
 - **Cache:** Bundled offline category snapshots plus a staged last-known-good category directory and per-file ETags/successful-check timestamp.
+- **Restore foundation:** A Room `RestorePoint` table (migration 1→2), per-app APK copy metadata, `restore.json`, and a SHA-256 verification helper. The backup repository returns a failure instead of authorizing uninstall when any copy cannot be verified.
 - **Risk mapping:** Pure function translating the upstream `removal` field into conservative display categories.
 - **Settings:** Preferences for theme and database update interval.
 - **Operations:** Existing standard uninstall intents and root-based behavior remain separate from community recommendations. All destructive actions require user confirmation.

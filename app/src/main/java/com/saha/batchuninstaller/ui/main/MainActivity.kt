@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "profiledb"
-        ).allowMainThreadQueries().build()
+        ).addMigrations(AppDatabase.MIGRATION_1_2).allowMainThreadQueries().build()
         //Bad practice to allow main thread queries but db should be small,
         //its a headache to now support co routines for a simple db operation
 		appUninstallCancelled = false
