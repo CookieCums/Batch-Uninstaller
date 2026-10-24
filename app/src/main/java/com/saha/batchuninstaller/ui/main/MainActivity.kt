@@ -36,8 +36,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.afollestad.materialdialogs.MaterialDialog
@@ -55,9 +55,6 @@ import com.saha.batchuninstaller.utils.PackageUtils
 import com.saha.batchuninstaller.utils.PackageUtils.moveBatchUninstallerToEnd
 import com.saha.batchuninstaller.utils.RootUtils.uninstallAppRoot
 import com.stericson.RootTools.RootTools
-import github.nisrulz.recyclerviewhelper.RVHItemClickListener
-import github.nisrulz.recyclerviewhelper.RVHItemDividerDecoration
-import github.nisrulz.recyclerviewhelper.RVHItemTouchHelperCallback
 import java.util.*
 import java.util.concurrent.ExecutionException
 import kotlin.collections.ArrayList
@@ -150,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         mAppsCopy = ArrayList(mApps)
 
         //populate the recyclerview
-        mAdapter = AppInfoAdapter(this, mApps)
+        mAdapter = AppInfoAdapter(this, mApps) { position -> onAppRowClicked(position) }
         binding.searchApps.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchQuery = query.orEmpty().trim()
@@ -166,55 +163,7 @@ class MainActivity : AppCompatActivity() {
         loadDebloatDatabase()
         mRvAppList.layoutManager = LinearLayoutManager(this)
         mRvAppList.adapter = mAdapter
-        val callback: ItemTouchHelper.Callback = RVHItemTouchHelperCallback(
-                mAdapter, true, true, true)
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(mRvAppList)
-        mRvAppList.addItemDecoration(
-                RVHItemDividerDecoration(this, LinearLayoutManager.VERTICAL))
-        mRvAppList.addOnItemTouchListener(RVHItemClickListener(
-                this, RVHItemClickListener.OnItemClickListener { _, position ->
-            if (mApps[position].systemApp && mFreeApps.contains(mApps[position].info)) {
-                try {
-                    when {
-                        !RootTools.isAccessGiven() -> Toast.makeText(applicationContext, R.string.no_root_system_app, Toast.LENGTH_SHORT).show()
-                        else -> Toast.makeText(applicationContext, R.string.root_system_app, Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: NotFoundException) {
-                    Log.e(javaClass.simpleName, "UnhandledException", e)
-                }
-            }
-            mApps[position].color = if (mApps[position].color == R.color.backgroundSelected) R.color.backgroundPrimary else R.color.backgroundSelected
-            mAdapter!!.notifyItemChanged(position)
-            if (mFreeApps.contains(mApps[position].info)) {
-                mFreeApps.remove(mApps[position].info)
-            } else {
-                mFreeApps.add(mApps[position].info!!)
-            }
-            if (mFreeApps.size == 0) {
-                binding.toolbar.imgbtnBack.visibility = View.GONE
-                binding.toolbar.imgbtnDelete.visibility = View.GONE
-                binding.toolbar.tvFreeSize.visibility = View.INVISIBLE
-                binding.fabSort.visibility = View.VISIBLE
-                binding.fabFilter.visibility = View.VISIBLE
-            } else {
-                binding.toolbar.imgbtnBack.visibility = View.VISIBLE
-                binding.toolbar.imgbtnDelete.visibility = View.VISIBLE
-                binding.toolbar.tvFreeSize.visibility = View.VISIBLE
-                binding.fabSort.visibility = View.INVISIBLE
-                binding.fabFilter.visibility = View.INVISIBLE
-                var totalBytes: Long = 0
-                for (pkg in mFreeApps) {
-                    totalBytes += PackageUtils.getApkSize(applicationContext, pkg.packageName)
-                }
-                binding.toolbar.tvFreeSize.text = Formatter
-                        .formatShortFileSize(
-                                applicationContext,
-                                totalBytes
-                        )
-            }
-        }))
-        binding.toolbar.imgbtnBack.setOnClickListener {
+        mRvAppList.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))\n        binding.toolbar.imgbtnBack.setOnClickListener {
             mFreeApps.clear()
             systemAppUninstalled = false
             binding.toolbar.imgbtnBack.visibility = View.GONE
@@ -327,6 +276,40 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+
+    private fun onAppRowClicked(position: Int) {
+        if (position !in mApps.indices) return
+        val app = mApps[position]
+        if (app.systemApp && mFreeApps.contains(app.info)) {
+            try {
+                val message = if (!RootTools.isAccessGiven()) R.string.no_root_system_app else R.string.root_system_app
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+            } catch (e: NotFoundException) {
+                Log.e(javaClass.simpleName, "UnhandledException", e)
+            }
+        }
+        app.color = if (app.color == R.color.backgroundSelected) R.color.backgroundPrimary else R.color.backgroundSelected
+        mAdapter?.notifyItemChanged(position)
+        val info = app.info ?: return
+        if (mFreeApps.contains(info)) mFreeApps.remove(info) else mFreeApps.add(info)
+
+        if (mFreeApps.isEmpty()) {
+            binding.toolbar.imgbtnBack.visibility = View.GONE
+            binding.toolbar.imgbtnDelete.visibility = View.GONE
+            binding.toolbar.tvFreeSize.visibility = View.INVISIBLE
+            binding.fabSort.visibility = View.VISIBLE
+            binding.fabFilter.visibility = View.VISIBLE
+        } else {
+            binding.toolbar.imgbtnBack.visibility = View.VISIBLE
+            binding.toolbar.imgbtnDelete.visibility = View.VISIBLE
+            binding.toolbar.tvFreeSize.visibility = View.VISIBLE
+            binding.fabSort.visibility = View.INVISIBLE
+            binding.fabFilter.visibility = View.INVISIBLE
+            val totalBytes = mFreeApps.sumOf { PackageUtils.getApkSize(applicationContext, it.packageName) }
+            binding.toolbar.tvFreeSize.text = Formatter.formatShortFileSize(applicationContext, totalBytes)
+        }
     }
 
     fun uninstallAppsFromProfile(freeAppsFromProfile: ArrayList<ApplicationInfo>) {
